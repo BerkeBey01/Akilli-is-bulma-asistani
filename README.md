@@ -1,6 +1,6 @@
 # Yapay Zeka Destekli İş Arama ve CV Analiz Asistanı
 
-Bu proje, iş arama sürecini otomatize eden, adayların özgeçmişlerini (CV) analiz ederek internetteki en uygun iş ilanlarını bulan ve bu ilanları Yapay Zeka (Google Gemini) ile skorlayan akıllı bir web uygulamasıdır.
+Bu proje, iş arama sürecini otomatize eden, adayların özgeçmişlerini (CV) analiz ederek internetteki en uygun iş ilanlarını bulan ve bu ilanları Yapay Zeka ile skorlayan akıllı bir web uygulamasıdır.
 
 ## Proje Hakkında
 
