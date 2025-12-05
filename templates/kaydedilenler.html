@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">💾 İlan Havuzu</h2>
+            <p class="text-muted small mb-0">Kaydedilen iş fırsatları.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary fs-6 shadow-sm">{{ ilanlar|length }} İlan</span>
+            <span class="badge bg-success fs-6 shadow-sm">{{ puanlar|length }} Analizli</span>
+
+            {% if cvler and ilanlar|length > puanlar|length %}
+            <!-- Toplu Analiz Butonu -->
+            <button id="topluAnalizBtn" class="btn btn-primary btn-sm shadow-sm ms-2" onclick="topluAnalizBaslat()">
+                <i class="fas fa-bolt me-1"></i> Tümünü Analiz Et ({{ ilanlar|length - puanlar|length }})
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- İlerleme Göstergesi -->
+    <div id="analizProgress" class="alert alert-info shadow-sm border-0 mb-4" style="display: none;">
+        <div class="d-flex align-items-center mb-2">
+            <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+            <strong id="analizDurum">Analiz başlatılıyor...</strong>
+        </div>
+        <div class="progress" style="height: 8px;">
+            <div id="analizBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                style="width: 0%"></div>
+        </div>
+        <small id="analizDetay" class="text-muted mt-1 d-block"></small>
+    </div>
+
+    <!-- Sonuç Mesajı -->
+    <div id="analizSonuc" class="alert shadow-sm border-0 mb-4" style="display: none;"></div>
+
+    {% if not cvler %}
+    <div class="alert alert-warning shadow-sm border-0 mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i> Analiz yapmak için önce CV yüklemelisiniz.
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 20%;">🏢 ŞİRKET</th>
+                        <th style="width: 35%;">💼 POZİSYON</th>
+                        <th style="width: 15%;">📅 TARİH</th>
+                        <th style="width: 20%; text-align: center;">🤖 PUAN</th>
+                        <th style="width: 10%; text-align: center;">⚙️ İŞLEM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ilan in ilanlar %}
+                    <tr id="ilan-row-{{ ilan.id }}">
+                        <td style="padding-left: 20px;">
+                            <div class="fw-bold text-dark fs-5">{{ ilan.sirket_adi or 'Belirtilmemiş' }}</div>
+                            <span class="badge bg-secondary" style="font-size: 0.7em;">{{ ilan.kaynak_site }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary">{{ ilan.baslik }}</div>
+                            <a href="{{ ilan.kaynak_url }}" target="_blank"
+                                class="btn btn-link btn-sm p-0 text-decoration-none">İlana Git 🔗</a>
+                        </td>
+                        <td>
+                            <div class="text-muted fw-bold">{{ ilan.bulunma_tarihi.strftime('%d.%m.%Y') }}</div>
+                            <small class="text-muted">{{ ilan.bulunma_tarihi.strftime('%H:%M') }}</small>
+                        </td>
+                        <td style="padding: 0 20px;" id="puan-cell-{{ ilan.id }}">
+                            {% if ilan.id in puanlar %}
+                            {% set skor = puanlar[ilan.id] %}
+                            {% set analiz = analizler.get(ilan.id, {}) %}
+                            {% set alt = analiz.get('alt_puanlar', {}) %}
+
+                            <!-- Ana Puan -->
+                            {% if skor >= 70 %}
+                            <div class="progress mb-1" style="height: 22px;">
+                                <div class="progress-bar bg-success fw-bold" style="width: {{ skor }}%;">%{{ skor }}
+                                </div>
+                            </div>
+                            {% elif skor >= 45 %}
+                            <div class="progress mb-1" style="height: 22px;">
+                                <div class="progress-bar bg-warning text-dark fw-bold" style="width: {{ skor }}%;">%{{
+                                    skor }}</div>
+                            </div>
+                            {% else %}
+                            <div class="progress mb-1" style="height: 22px;">
+                                <div class="progress-bar bg-danger fw-bold" style="width: {{ skor }}%;">%{{ skor }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Alt Puanlar (varsa) -->
+                            {% if alt %}
+                            <div class="d-flex flex-wrap gap-1 mt-1" style="font-size: 0.65em;">
+                                <span class="badge bg-primary bg-opacity-75" title="Teknik Yetenekler">T:{{ alt.teknik
+                                    }}</span>
+                                <span class="badge bg-info bg-opacity-75" title="Deneyim">D:{{ alt.deneyim }}</span>
+                                <span class="badge bg-purple" style="background-color: #7c3aed;" title="Eğitim">E:{{
+                                    alt.egitim }}</span>
+                                <span class="badge bg-success bg-opacity-75" title="Dil">L:{{ alt.dil }}</span>
+                                <span class="badge bg-warning text-dark" title="Sertifika">S:{{ alt.sertifika }}</span>
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="text-center text-muted small">Analiz Bekliyor</div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if cvler %}
+                            <form action="{{ url_for('tekil_analiz', ilan_id=ilan.id, cv_id=cvler[0].id) }}"
+                                method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit"
+                                    class="btn btn-sm w-100 fw-bold shadow-sm {% if ilan.id in puanlar %} btn-outline-secondary {% else %} btn-primary {% endif %}">
+                                    {% if ilan.id in puanlar %} <i class="fas fa-sync-alt"></i> Yenile {% else %} <i
+                                        class="fas fa-robot"></i> Analiz Et {% endif %}
+                                </button>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-sm btn-light text-muted w-100 border" disabled>CV Yok</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted">
+                                <h4>📭 Havuz Boş</h4>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function topluAnalizBaslat() {
+        const btn = document.getElementById('topluAnalizBtn');
+        const progress = document.getElementById('analizProgress');
+        const sonuc = document.getElementById('analizSonuc');
+        const durum = document.getElementById('analizDurum');
+        const bar = document.getElementById('analizBar');
+        const detay = document.getElementById('analizDetay');
+
+        // UI güncelle
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Analiz Ediliyor...';
+        progress.style.display = 'block';
+        sonuc.style.display = 'none';
+
+        durum.textContent = 'İlanlar paralel olarak analiz ediliyor... (5 ilan aynı anda)';
+        bar.style.width = '30%';
+        detay.textContent = 'Bu işlem ilan sayısına göre birkaç dakika sürebilir.';
+
+        // CSRF token al
+        const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
+
+        fetch('/toplu-analiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                bar.style.width = '100%';
+                bar.classList.remove('progress-bar-animated');
+
+                if (data.error) {
+                    sonuc.className = 'alert alert-danger shadow-sm border-0 mb-4';
+                    sonuc.innerHTML = '<i class="fas fa-times-circle me-2"></i>' + data.error;
+                } else {
+                    sonuc.className = 'alert alert-success shadow-sm border-0 mb-4';
+                    sonuc.innerHTML = `<i class="fas fa-check-circle me-2"></i><strong>${data.basarili}/${data.toplam}</strong> ilan başarıyla analiz edildi! Sayfa yenileniyor...`;
+
+                    // Sayfayı 2 saniye sonra yenile
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+
+                sonuc.style.display = 'block';
+                progress.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                sonuc.className = 'alert alert-danger shadow-sm border-0 mb-4';
+                sonuc.innerHTML = '<i class="fas fa-times-circle me-2"></i>Bir hata oluştu: ' + error.message;
+                sonuc.style.display = 'block';
+                progress.style.display = 'none';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt me-1"></i> Tümünü Analiz Et';
+            });
+    }
+</script>
+{% endblock %}

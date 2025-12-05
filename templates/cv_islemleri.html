@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold"><i class="fas fa-file-alt text-primary me-2"></i>CV Yönetimi</h2>
+        <p class="text-muted">CV'lerini yükle, analiz et ve yönet.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fas fa-cloud-upload-alt text-primary me-2"></i>Yeni CV Yükle</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">PDF veya DOCX formatında CV yükleyin.</p>
+                <form method="POST" enctype="multipart/form-data" class="mt-3">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" name="cv" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">Yükle ve Analiz Et</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        {% if cvler %}
+            {% for cv in cvler %}
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="fw-bold text-dark mb-1">
+                                <i class="fas fa-file-pdf text-danger me-2"></i>{{ cv.orjinal_dosya_adi }}
+                            </h5>
+
+                            <!-- Temel Bilgiler -->
+                            <div class="text-muted small mt-2 mb-3">
+                                {% if cv.cikarilan_veriler and cv.cikarilan_veriler.epostalar %}
+                                    <span class="me-3"><i class="fas fa-envelope me-1"></i>{{ cv.cikarilan_veriler.epostalar[0] }}</span>
+                                {% endif %}
+                                {% if cv.cikarilan_veriler and cv.cikarilan_veriler.lokasyonlar %}
+                                    <span class="me-3"><i class="fas fa-map-marker-alt me-1"></i>{{ cv.cikarilan_veriler.lokasyonlar[0] }}</span>
+                                {% endif %}
+                                {% if cv.cikarilan_veriler and cv.cikarilan_veriler.toplam_deneyim_yili %}
+                                    <span class="me-3"><i class="fas fa-briefcase me-1"></i>{{ cv.cikarilan_veriler.toplam_deneyim_yili }} deneyim</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Ozet -->
+                            {% if cv.cikarilan_veriler and cv.cikarilan_veriler.ozet %}
+                            <div class="alert alert-light py-2 px-3 mb-3">
+                                <small><i class="fas fa-quote-left text-muted me-1"></i>{{ cv.cikarilan_veriler.ozet }}</small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Yetenekler -->
+                            <div class="mb-3">
+                                <small class="text-muted fw-bold"><i class="fas fa-code me-1"></i>Yetenekler:</small><br>
+                                {% if cv.cikarilan_veriler and cv.cikarilan_veriler.yetenekler %}
+                                    {% for yetenek in cv.cikarilan_veriler.yetenekler[:12] %}
+                                        <span class="badge bg-primary bg-opacity-10 text-primary me-1 mb-1">{{ yetenek }}</span>
+                                    {% endfor %}
+                                    {% if cv.cikarilan_veriler.yetenekler|length > 12 %}
+                                        <span class="badge bg-secondary">+{{ cv.cikarilan_veriler.yetenekler|length - 12 }} daha</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted small">Yetenek verisi yok.</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Yabanci Diller -->
+                            {% if cv.cikarilan_veriler and cv.cikarilan_veriler.yabanci_diller %}
+                            <div class="mb-3">
+                                <small class="text-muted fw-bold"><i class="fas fa-language me-1"></i>Diller:</small><br>
+                                {% for dil in cv.cikarilan_veriler.yabanci_diller %}
+                                    <span class="badge bg-success bg-opacity-10 text-success me-1 mb-1">{{ dil.dil }} ({{ dil.seviye }})</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Egitim Bilgileri -->
+                            {% if cv.cikarilan_veriler and cv.cikarilan_veriler.egitim_bilgileri %}
+                            <div class="mb-3">
+                                <small class="text-muted fw-bold"><i class="fas fa-graduation-cap me-1"></i>Eğitim:</small><br>
+                                {% for egitim in cv.cikarilan_veriler.egitim_bilgileri %}
+                                    <div class="d-inline-block me-2 mb-1">
+                                        <span class="badge bg-purple bg-opacity-10 text-purple" style="background-color: rgba(139, 92, 246, 0.1); color: #7c3aed;">
+                                            {{ egitim.bolum_adi }} - {{ egitim.okul_adi }}
+                                            {% if egitim.mezuniyet_yili %}({{ egitim.mezuniyet_yili }}){% endif %}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Is Deneyimleri -->
+                            {% if cv.cikarilan_veriler and cv.cikarilan_veriler.is_deneyimleri %}
+                            <div class="mb-3">
+                                <small class="text-muted fw-bold"><i class="fas fa-building me-1"></i>Deneyim:</small><br>
+                                {% for deneyim in cv.cikarilan_veriler.is_deneyimleri[:3] %}
+                                    <span class="badge bg-info bg-opacity-10 text-info me-1 mb-1">{{ deneyim.pozisyon }} @ {{ deneyim.sirket_adi }}</span>
+                                {% endfor %}
+                                {% if cv.cikarilan_veriler.is_deneyimleri|length > 3 %}
+                                    <span class="badge bg-secondary">+{{ cv.cikarilan_veriler.is_deneyimleri|length - 3 }} daha</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Sertifikalar -->
+                            {% if cv.cikarilan_veriler and cv.cikarilan_veriler.sertifikalar %}
+                            <div class="mb-2">
+                                <small class="text-muted fw-bold"><i class="fas fa-certificate me-1"></i>Sertifikalar:</small><br>
+                                {% for sertifika in cv.cikarilan_veriler.sertifikalar[:4] %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning me-1 mb-1">{{ sertifika.sertifika_adi }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <form action="{{ url_for('cv_sil', cv_id=cv.id) }}" method="POST" onsubmit="return confirm('Silmek istediğine emin misin?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-light text-center py-5 border shadow-sm">
+                <h5>Henüz CV Yüklenmedi</h5>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

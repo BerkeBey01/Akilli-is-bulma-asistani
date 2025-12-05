@@ -1,0 +1,17 @@
+# Web Framework
+Flask>=2.3.0
+Flask-SQLAlchemy>=3.0.0
+Flask-WTF>=1.2.0
+
+# Guvenlik
+Werkzeug>=2.3.0
+python-dotenv>=1.0.0
+
+# Dosya Isleme
+PyMuPDF>=1.23.0
+python-docx>=0.8.11
+
+# HTTP & Web Scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+duckduckgo-search>=4.0.0

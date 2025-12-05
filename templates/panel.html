@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">Hoş Geldin! 👋</h2>
+        <p class="text-muted">Kariyer yolculuğunun özeti burada.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary me-3">
+                    <i class="fas fa-briefcase fa-2x"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1">Toplam İlan</h6>
+                    <h2 class="fw-bold mb-0">{{ ilan_sayisi }}</h2>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('kaydedilenler') }}" class="btn btn-sm btn-outline-primary w-100">Havuzu İncele</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="d-flex align-items-center">
+                <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success me-3">
+                    <i class="fas fa-file-alt fa-2x"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1">Yüklü CV</h6>
+                    <h2 class="fw-bold mb-0">{{ cv_sayisi }}</h2>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('cv_islemleri') }}" class="btn btn-sm btn-outline-success w-100">CV Yönetimi</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3 bg-primary text-white" style="background: linear-gradient(135deg, #4F46E5 0%, #6366f1 100%);">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-search-location fa-2x me-3"></i>
+                <h4 class="mb-0 fw-bold">Yeni İş Ara</h4>
+            </div>
+            <p class="small opacity-75 mb-3">Saniyeler içinde yüzlerce ilanı tara.</p>
+            <a href="{{ url_for('is_ara_sayfasi') }}" class="btn btn-light text-primary fw-bold w-100">Aramayı Başlat 🚀</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

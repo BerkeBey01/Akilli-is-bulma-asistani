@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row align-items-center mt-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-dark mb-3">
+            Hayalindeki İşi <br>
+            <span style="color: #4F46E5;">Yapay Zeka</span> ile Bul.
+        </h1>
+        <p class="lead text-muted mb-4">
+            Binlerce siteyi senin için tarıyoruz, CV'n ile analiz ediyoruz ve sana en uygun işleri nokta atışı getiriyoruz.
+        </p>
+        <div class="d-flex gap-3">
+            {% if session.user_id %}
+                <a href="{{ url_for('panel') }}" class="btn btn-primary btn-lg shadow">Paneline Git <i class="fas fa-arrow-right ms-2"></i></a>
+            {% else %}
+                <a href="{{ url_for('kayit') }}" class="btn btn-primary btn-lg shadow">Ücretsiz Başla</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">Giriş Yap</a>
+            {% endif %}
+        </div>
+        
+        <div class="mt-5 d-flex gap-4 text-muted small">
+            <div><i class="fas fa-check-circle text-success me-1"></i> Otomatik Tarama</div>
+            <div><i class="fas fa-check-circle text-success me-1"></i> AI CV Analizi</div>
+            <div><i class="fas fa-check-circle text-success me-1"></i> Gerçek Veri</div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 text-center mt-5 mt-lg-0">
+        <div style="background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, rgba(255,255,255,0) 70%); padding: 50px;">
+            <i class="fas fa-rocket fa-10x" style="color: #4F46E5; filter: drop-shadow(0 10px 10px rgba(79, 70, 229, 0.3));"></i>
+        </div>
+    </div>
+</div>
+{% endblock %}

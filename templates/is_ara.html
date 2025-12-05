@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-3"><span class="text-primary">Yapay Zeka</span> ile İş Ara</h1>
+            <p class="lead text-muted mb-5">LinkedIn, RemoteOK ve yüzlerce kariyer sitesini senin için tarıyoruz.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-secondary">ANALİZ EDİLECEK CV</label>
+                            <select name="secilen_cv_id" class="form-select form-select-lg bg-light border-start-0" required>
+                                {% for cv in cvler %}
+                                    <option value="{{ cv.id }}">{{ cv.orjinal_dosya_adi }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg shadow-sm py-3 fw-bold">
+                            <i class="fas fa-rocket me-2"></i> Taramayı Başlat
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
