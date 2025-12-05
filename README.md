@@ -34,8 +34,8 @@ Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
 
 ### 1. Projeyi Klonlayın
 ```bash
-git clone [https://github.com/KULLANICI_ADINIZ/REPO_ADINIZ.git](https://github.com/KULLANICI_ADINIZ/REPO_ADINIZ.git)
-cd REPO_ADINIZ
+git clone https://github.com/BerkeBey01/Akilli-is-bulma-asistani.git
+cd Akilli-is-bulma-asistani
 
 ### 2. Sanal Ortam (Virtual Environment) Oluşturun
 # Windows için
