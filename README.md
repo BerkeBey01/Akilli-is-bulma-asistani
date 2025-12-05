@@ -31,9 +31,9 @@ Sistem şu üç temel sorunu çözer:
 ## Kurulum ve Çalıştırma
 
 Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
-
+```
 ### 1. Projeyi Klonlayın
-```bash
+``` bash
 git clone https://github.com/BerkeBey01/Akilli-is-bulma-asistani.git
 cd Akilli-is-bulma-asistani
 
@@ -68,5 +68,5 @@ CV Yükle: "CV İşlemleri" menüsünden güncel özgeçmişinizi (PDF/DOCX) yü
 İş Ara: "İş Ara" menüsüne gelin, yüklediğiniz CV'yi seçin ve "İş Ara" butonuna basın.
 
 Analiz Et: "Kaydedilenler" sayfasında bulunan ilanları görüntüleyin. "Analiz Et" butonuna basarak Yapay Zekanın sizin için oluşturduğu uyumluluk raporunu inceleyin.
-
+```
 Bu proje, İskenderun Teknik Üniversitesi (İSTE), Bilgisayar Mühendisliği Bölümü, 2024-2025 Eğitim-Öğretim Yılı Mühendislikte Bilgisayar Uygulamaları dersi kapsamında geliştirilmiştir.
